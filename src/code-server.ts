@@ -42,18 +42,27 @@ export class CodeServerStack extends TerraformStack {
       # dependencies for pyenv
       apt-get -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
+      # install nvidia driver
+      apt -y install nvidia-driver-515
+
+      # install nvidia container driver
+      curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
+      export distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+      curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+      apt -y update
+      apt install -y nvidia-docker2
+
       # mount volume
       echo '/dev/vdb /root ext4 defaults 0 0' >> /etc/fstab
-      mount -a
 
-      # restart code server
-      systemctl restart code-server@root
+      # reboot host
+      reboot
     `;
 
     new ComputeInstanceV2(this, 'CodeServer', {
       name: 'code-server',
       imageName: 'ubuntu-2204',
-      flavorName: 's1.large',
+      flavorName: 'p1.xlarge',
       keyPair: 'bbrfkr',
       securityGroups: ['allow-all'],
       network: [{ name: 'public' }],
