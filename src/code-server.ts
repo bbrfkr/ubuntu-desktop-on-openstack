@@ -52,6 +52,10 @@ export class CodeServerStack extends TerraformStack {
       apt -y update
       apt install -y nvidia-docker2
 
+      # install desktop
+      apt -y install ubuntu-desktop
+      apt -y install xrdp
+
       # mount volume
       echo '/dev/vdb /root ext4 defaults 0 0' >> /etc/fstab
 
