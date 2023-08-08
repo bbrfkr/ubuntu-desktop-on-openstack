@@ -69,22 +69,22 @@ export class CodeServerStack extends TerraformStack {
 
     new ComputeInstanceV2(this, 'CodeServer', {
       name: 'code-server',
-      imageName: 'ubuntu-2204',
-      flavorName: 'p1.xlarge',
+      imageName: 'ubuntu-jammy',
+      flavorName: 'p1.2xlarge',
       keyPair: 'bbrfkr',
       securityGroups: ['allow-all'],
-      network: [{ name: 'public' }],
+      network: [{ name: 'common' }],
       userData: userData,
       blockDevice: [
         {
-          uuid: "a51939c7-256f-44e1-9ce6-e67f3d9b3d71",
+          uuid: "ac0d794a-2067-43ed-b726-af10ae0814b5",
           sourceType: "image",
           destinationType: "local",
           bootIndex: 0,
           deleteOnTermination: true,
         },
         {
-          uuid: "21f06215-6dc4-41fe-9144-af7b4cde8173",
+          uuid: "15a69af7-95a3-4496-9fd1-2b54426e0e35",
           sourceType: "volume",
           destinationType: "volume",
           bootIndex: 1,
