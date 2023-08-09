@@ -17,6 +17,14 @@ export class UbuntuDesktopStack extends TerraformStack {
       # os update
       apt -y update && apt -y upgrade
 
+      # mount volume
+      mount /dev/vdb /mnt
+      if [ ! -d "/mnt/ubuntu" ]; then
+        cp -pr /home/ubuntu /mnt
+      fi
+      umount /mnt
+      echo '/dev/vdb /home ext4 defaults 0 0' >> /etc/fstab
+
       # install nvidia driver
       apt -y install nvidia-driver-535
 
@@ -35,7 +43,7 @@ export class UbuntuDesktopStack extends TerraformStack {
     new ComputeInstanceV2(this, 'UbuntuDesktop', {
       name: 'ubuntu-desktop',
       imageName: 'ubuntu-jammy',
-      flavorName: 'p1.2xlarge',
+      flavorName: 'p1.6xlarge',
       keyPair: 'bbrfkr',
       securityGroups: ['allow-all'],
       network: [{ name: 'common' }],
@@ -49,6 +57,13 @@ export class UbuntuDesktopStack extends TerraformStack {
           volumeSize: 200,
           deleteOnTermination: true,
         },
+        {
+          uuid: "449acaa4-6dc2-449d-abb6-93ebe04d2478",
+          sourceType: "volume",
+          destinationType: "volume",
+          bootIndex: 1,
+          deleteOnTermination: false,
+        }
       ]
     });
   }
